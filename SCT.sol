@@ -1,6 +1,23 @@
 pragma solidity ^0.4.18;
 
-contract SimpleCoinToken {
+contract Ownable {
+  address owner;
+
+  function Ownable() public {
+    owner = msg.sender;
+  }
+
+  modifier onlyOwner() {
+    require(msg.sender == owner);
+    _;
+  }
+
+  function transferOwnership(address newOwner) public onlyOwner {
+    owner = newOwner;
+  }
+}
+
+contract SimpleCoinToken is Ownable {
   string public constant name = "Simple Coin Token";
   string public constant symbol = "SCT";
   uint32 public constant decimals = 18;
@@ -11,7 +28,7 @@ contract SimpleCoinToken {
 
   mapping (address => mapping (address => uint)) allowed;
 
-  function mint(address _to, uint _value) public {
+  function mint(address _to, uint _value) public onlyOwner {
     assert(totalSupply + _value >= totalSupply && balances[_to] + _value >= balances[_to]);
     totalSupply += _value;
     balances[_to] += _value;
