@@ -9,6 +9,8 @@ contract SimpleCoinToken {
 
   mapping (address => uint) balances;
 
+  mapping (address => mapping (address => uint)) allowed;
+
   function mint(address _to, uint _value) public {
     assert(totalSupply + _value >= totalSupply && balances[_to] + _value >= balances[_to]);
     totalSupply += _value;
@@ -30,7 +32,9 @@ contract SimpleCoinToken {
   }
 
   function transferFrom(address _from, address _to, uint _value) public returns (bool success) {
-    if (balances[_from] >= _value && balances[_to] + _value >= balances[_to]) {
+    if (allowance(_from, msg.sender) >= _value &&
+        balances[_from] >= _value &&
+        balances[_to] + _value >= balances[_to]) {
       balances[_from] -= _value;
       balances[_to] += _value;
       Transfer(_from, _to, _value);
@@ -40,11 +44,13 @@ contract SimpleCoinToken {
   }
 
   function approve(address _spender, uint _value) public returns (bool success) {
-    return false;
+    allowed[msg.sender][_spender] = _value;
+    Approval(msg.sender, _spender, _value);
+    return true;
   }
 
-  function allowance(address _owner, address _spender) constant returns (uint remaining) {
-    return 0;
+  function allowance(address _owner, address _spender) public constant returns (uint remaining) {
+    return allowed[_owner][_spender];
   }
 
   event Transfer(address indexed _from, address indexed _to, uint _value);
