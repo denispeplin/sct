@@ -10,16 +10,32 @@ contract SimpleCoinToken is MintableToken {
 
 contract Crowdsale {
 
-  address owner;
+  using SafeMath for uint;
+
+  address miltisig;
+
+  uint restrictedPercent;
+
+  address restricted;
 
   SimpleCoinToken public token = new SimpleCoinToken();
 
-  uint start = 1512086400;
+  uint start;
 
-  uint period = 28;
+  uint period;
+
+  uint hardcap;
+
+  uint rate;
 
   function Crowdsale() public {
-    owner = msg.sender;
+    multisig = 0xEA15Adb66DC92a4BbCcC8Bf32fd25E2e86a2A770;
+    restricted = 0xb3eD172CC64839FB0C0Aa06aa129f402e994e7De;
+    restrictedPercent = 40;
+    rate = 100000000000000000000;
+    start = 1512086400;
+    period = 28;
+    hardcap = 10000000000000000000000;
   }
 
   modifier saleIsOn() {
@@ -27,9 +43,22 @@ contract Crowdsale {
     _;
   }
 
-  function createTokens() saleIsOn payable {
-    owner.transfer(msg.value);
-    token.mint(msg.sender, msg.value);
+  modifier isUnderHardCap() {
+    require(multisig.balance < hardcap);
+    _;
+  }
+
+  function finishMinting() public onlyOwner {
+    uint issuedTokenSupply = token.totalSupply();
+    uint restrictedTokens = issuedTokenSupply.mul(restrictedPercent).div(100 - restrictedPercent);
+    token.mint(restricted, restrictedTokens);
+    token.finishMinting();
+  }
+
+  function createTokens() isUnderHardCap saleIsOn payable {
+    multisig.transfer(msg.value);
+    uint tokens = rate.mul(msg.value).div(1 ether);
+    token.mint(msg.sender, tokens);
   }
 
   function() external payable {
