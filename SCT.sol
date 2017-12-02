@@ -22,9 +22,17 @@ contract Crowdsale {
     owner = msg.sender;
   }
 
-  function() external payable {
-    require(now > start && now < start + period*24*60*60);
+  modifier saleIsOn() {
+    require(now > start && now < start + period * 1 days);
+    _;
+  }
+
+  function createTokens() saleIsOn payable {
     owner.transfer(msg.value);
     token.mint(msg.sender, msg.value);
+  }
+
+  function() external payable {
+    createTokens();
   }
 }
