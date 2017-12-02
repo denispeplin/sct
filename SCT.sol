@@ -58,6 +58,16 @@ contract Crowdsale {
   function createTokens() isUnderHardCap saleIsOn payable {
     multisig.transfer(msg.value);
     uint tokens = rate.mul(msg.value).div(1 ether);
+    uint bonusTokens = 0;
+    uint saleTime = period * 1 days;
+    if(now < start + saleTime.div(4)) {
+      bonusTokens = tokens.div(4);
+    } else if(now >= start + saleTime.div(4) && now < start + saleTime.div(2)) {
+      bonusTokens = tokens.div(10);
+    } else if(now >= start + saleTime.div(2) && now > saleTime.div(4).mul(3)) {
+      bonusTokens = tokens.div(20);
+    }
+    tokens = tokens + bonusTokens;
     token.mint(msg.sender, tokens);
   }
 
