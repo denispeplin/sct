@@ -8,11 +8,11 @@ contract SimpleCoinToken is MintableToken {
   uint32 public constant decimals = 18;
 }
 
-contract Crowdsale {
+contract Crowdsale is Ownable {
 
   using SafeMath for uint;
 
-  address miltisig;
+  address multisig;
 
   uint restrictedPercent;
 
@@ -48,14 +48,14 @@ contract Crowdsale {
     _;
   }
 
-  function finishMinting() public onlyOwner {
+  function finishMinting() onlyOwner public {
     uint issuedTokenSupply = token.totalSupply();
     uint restrictedTokens = issuedTokenSupply.mul(restrictedPercent).div(100 - restrictedPercent);
     token.mint(restricted, restrictedTokens);
     token.finishMinting();
   }
 
-  function createTokens() isUnderHardCap saleIsOn payable {
+  function createTokens() isUnderHardCap saleIsOn public payable {
     multisig.transfer(msg.value);
     uint tokens = rate.mul(msg.value).div(1 ether);
     uint bonusTokens = 0;
