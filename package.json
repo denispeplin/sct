@@ -1,0 +1,23 @@
+{
+  "name": "sct",
+  "version": "1.0.0",
+  "description": "Lesson is here: [http://inaword.ru/blokchejn/pishem-smart-kontrakt-ethereum-eto-prosto-chast-5-token-erc20/](http://inaword.ru/blokchejn/pishem-smart-kontrakt-ethereum-eto-prosto-chast-5-token-erc20) (Russian).",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/denispeplin/sct.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/denispeplin/sct/issues"
+  },
+  "homepage": "https://github.com/denispeplin/sct#readme",
+  "dependencies": {
+    "ethereumjs-abi": "^0.6.5"
+  }
+}
